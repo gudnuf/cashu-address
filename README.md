@@ -135,7 +135,7 @@ Bob scans for payments by monitoring spent secrets on his mint:
      output_secret = hex_encode(SHA256("output" || output_pubkey_compressed))
      blinding_factor = SHA256("blinder" || output_secret_bytes || [k])
 
-     // Create OutputData with amount=0 (amount will be filled by restore)
+     # Create OutputData with amount=0 (amount will be filled by restore)
      output_data[k] = OutputData(amount=0, output_secret, blinding_factor, keyset_id)
    ```
 
