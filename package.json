@@ -7,7 +7,8 @@
   "scripts": {
     "cli": "bun run src/cli.ts",
     "reset": "rm cashu-wallet.db",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "bun test"
   },
   "dependencies": {
     "@cashu/cashu-ts": "^2.7.2",
