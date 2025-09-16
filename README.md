@@ -11,16 +11,16 @@ This is a concept demo based on bitcoin's silent payments ([BIP-352](https://en.
 
 ### Installation
 
+Optionally, you can use the Nix flake to enter a development shell:
+
+```bash
+nix develop
+```
+
 Install using Bun:
 
 ```bash
 bun install
-```
-
-Alternatively, you can use the Nix flake to enter a development shell:
-
-```bash
-nix develop
 ```
 
 ### Getting Started
@@ -162,3 +162,4 @@ Bob scans for payments by monitoring spent secrets on his mint:
 - Allow wallets to "sync" a mint's spent secrets so that it doesn't have to fetch all for every scan
 - Analyze privacy concerns around claiming all discovered outputs at once. Should they all be claimed at once? Should we try to correlate outputs to a single transaction and only claim those at once? Any timing considerations?
 - Allow Alice to use multiple inputs
+- Encode the address... bech32?
