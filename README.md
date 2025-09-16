@@ -122,7 +122,7 @@ Bob scans for payments by monitoring spent secrets on his mint:
      ephemeral_pubkey = secp256k1.Point.fromHex(spent_secret)
      shared_secret = ECDH(bob_scan_privkey, ephemeral_pubkey)
    except:
-     continue  // Skip invalid points
+     continue  # Skip invalid points
    ```
 
 4. **Generate Potential Outputs**: Bob recreates the same derivation Alice used:
