@@ -48,8 +48,6 @@ export async function scanForPayments(
         createSilentOutput(0, keys, ecdhShared, silentKeys.spend_pubkey, k),
     );
 
-    logger.info(`Checking ${potentialOutputData.length} potential output data`);
-
     const { send: proofs } = await wallet.restoreFromOutputData(
       { send: potentialOutputData, keep: [] },
       wallet.keysetId,
@@ -62,7 +60,10 @@ export async function scanForPayments(
       .map((proof) => {
         const Y = proofToY(proof);
         const matchingState = unspent.find((p) => p.Y === Y);
-        if (matchingState) return proof;
+        if (matchingState) {
+          logger.info(`found unspent proofs for secret: ${secret}`);
+          return proof;
+        }
         return undefined;
       })
       .filter((p) => p !== undefined);

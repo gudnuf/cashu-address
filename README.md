@@ -1,6 +1,6 @@
 # Cashu Address
 
-This is a concept demo based on bitcoin's silent payments ([BIP-352](https://en.bitcoin.it/wiki/BIP_0352)) for silent nuts where a sender (Alice) can natively send payments to Bob with just his mint url and public keys.
+This is a concept demo based on Bitcoin's silent payments ([BIP-352](https://en.bitcoin.it/wiki/BIP_0352)) for silent nuts where a sender (Alice) can natively send payments to Bob with just his mint url and public keys.
 
 > [!WARNING]
 > Still a work in progess and the crypto has not been verified.
@@ -24,6 +24,8 @@ bun install
 ```
 
 ### Getting Started
+
+For managing multiple wallets see [MULTI_WALLET_USAGE](MULTI_WALLET_USAGE.md). The following example shows you how to use a single wallet instance.
 
 1. **Load your wallet** by minting tokens from a Lightning invoice:
 
@@ -63,7 +65,7 @@ Bob generates two key pairs for silent payments:
 
 Bob publishes his **Cashu Address** in the format: `{mintUrl}:{scan_pubkey}:{spend_pubkey}`
 
-Both public keys are compressed secp256k1 points (33 bytes, 66 hex characters) with 02/03 prefix.
+Both public keys are compressed secp256k1 points.
 
 ### 2. Alice's Payment Construction
 
@@ -73,14 +75,7 @@ When Alice wants to send `amount` to Bob's Cashu Address:
 
 2. **Generate Ephemeral Key**: Alice creates a random ephemeral key pair `(ephemeral_privkey, ephemeral_pubkey)`
 
-3. **Create Special Proof**: Alice first creates a "special proof" using her ephemeral public key as the secret:
-
-   ```python
-   special_secret = hex_encode(ephemeral_pubkey_compressed)
-   special_proof = wallet.send(total_input_amount, input_proofs, outputData(special_secret))
-   ```
-
-   The special proof consumes all input proofs and creates a single output with the ephemeral pubkey as its secret.
+3. **Create Special Proof**: Alice first creates a special proof by swapping for a `Proof` where the `secret` is her ephemeral public key.
 
 4. **Compute Shared Secret**: Alice performs ECDH with Bob's scan key:
 
@@ -91,7 +86,7 @@ When Alice wants to send `amount` to Bob's Cashu Address:
 5. **Generate Silent Outputs**: Alice creates outputs for Bob using the shared secret:
 
    ```python
-   for k = 0, 1, 2, ... (one per output denomination):
+   for k = 0, 1, 2, ... # (one per output denomination):
      tweak = SHA256("silent_output" || shared_secret || [k])
      tweak_point = tweak * G
      output_pubkey = bob_spend_pubkey + tweak_point
@@ -160,6 +155,6 @@ Bob scans for payments by monitoring spent secrets on his mint:
 
 - We should use 32-byte x-only public keys for the input proofs so that the secrets blend in with the rest.
 - Allow wallets to "sync" a mint's spent secrets so that it doesn't have to fetch all for every scan
-- Analyze privacy concerns around claiming all discovered outputs at once. Should they all be claimed at once? Should we try to correlate outputs to a single transaction and only claim those at once? Any timing considerations?
+- Analyze privacy concerns around claiming all discovered outputs at once. Should they all be claimed at once? Should we try to correlate outputs to a single transaction and only claim those at once?
 - Allow Alice to use multiple inputs
 - Encode the address... bech32?

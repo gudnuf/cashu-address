@@ -49,7 +49,7 @@ export class Wallet extends CashuWallet {
   }
 
   static async create(config?: WalletConfig): Promise<Wallet> {
-    const dbPath = config?.dbPath || "./cashu-wallet.db";
+    const dbPath = config?.dbPath || process.env.CASHU_WALLET_DB || "./cashu-wallet.db";
     const defaultMintUrl = config?.mintUrl || "http://localhost:8085";
 
     const database = new WalletDatabase(dbPath);
