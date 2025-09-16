@@ -75,7 +75,7 @@ When Alice wants to send `amount` to Bob's Cashu Address:
 
 3. **Create Special Proof**: Alice first creates a "special proof" using her ephemeral public key as the secret:
 
-   ```
+   ```python
    special_secret = hex_encode(ephemeral_pubkey_compressed)
    special_proof = wallet.send(total_input_amount, input_proofs, outputData(special_secret))
    ```
@@ -84,14 +84,14 @@ When Alice wants to send `amount` to Bob's Cashu Address:
 
 4. **Compute Shared Secret**: Alice performs ECDH with Bob's scan key:
 
-   ```
+   ```python
    shared_secret = ECDH(ephemeral_privkey, bob_scan_pubkey)
    ```
 
 5. **Generate Silent Outputs**: Alice creates outputs for Bob using the shared secret:
 
-   ```
-   For k = 0, 1, 2, ... (one per output denomination):
+   ```python
+   for k = 0, 1, 2, ... (one per output denomination):
      tweak = SHA256("silent_output" || shared_secret || [k])
      tweak_point = tweak * G
      output_pubkey = bob_spend_pubkey + tweak_point
@@ -101,7 +101,7 @@ When Alice wants to send `amount` to Bob's Cashu Address:
 
 6. **Create Final Transaction**: Alice spends the special proof to create outputs for Bob:
 
-   ```
+   ```python
    {bob_proofs, alice_change} = wallet.send(amount, [special_proof], silent_output_factory)
    ```
 
@@ -117,7 +117,7 @@ Bob scans for payments by monitoring spent secrets on his mint:
 
 3. **Test Each Potential Payment**: For each ephemeral key candidate:
 
-   ```
+   ```python
    try:
      ephemeral_pubkey = secp256k1.Point.fromHex(spent_secret)
      shared_secret = ECDH(bob_scan_privkey, ephemeral_pubkey)
@@ -127,8 +127,8 @@ Bob scans for payments by monitoring spent secrets on his mint:
 
 4. **Generate Potential Outputs**: Bob recreates the same derivation Alice used:
 
-   ```
-   For k = 0, 1, 2, ..., MAX_OUTPUTS_TO_SCAN (typically 8):
+   ```python
+   for k = 0, 1, 2, ..., MAX_OUTPUTS_TO_SCAN (typically 8):
      tweak = SHA256("silent_output" || shared_secret || [k])
      tweak_point = tweak * G
      output_pubkey = bob_spend_pubkey + tweak_point
@@ -141,7 +141,7 @@ Bob scans for payments by monitoring spent secrets on his mint:
 
 5. **Restore Proofs**: Bob attempts to restore proofs using the derived output data:
 
-   ```
+   ```python
    potential_proofs = wallet.restoreFromOutputData({send: output_data, keep: []}, keyset_id)
    ```
 
@@ -149,7 +149,7 @@ Bob scans for payments by monitoring spent secrets on his mint:
 
 6. **Verify Unspent**: Bob checks which restored proofs are still unspent:
 
-   ```
+   ```python
    proof_states = wallet.checkProofsStates(potential_proofs.send)
    unspent_proofs = filter(potential_proofs.send, state == "UNSPENT")
    ```
